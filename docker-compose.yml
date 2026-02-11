@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:latest #используемая Docker-образ PostgreSQL
+    container_name: postgres_container #имя контейнера, в котором будет запущен PostgreSQL.
+    restart: unless-stopped #restart, tty, stdin_open: настройки перезапуска контейнера и взаимодействия с ним через терминал.
+    environment: #переменные окружения для настройки PostgreSQL (пользователь, пароль, имя базы данных).
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports: #проброс портов, где "5430:5432" означает, что порт PostgreSQL внутри контейнера (5432) проброшен на порт хоста (5430). Это значит что для подключения к постгрес нужно будет прописывать порт 5430.
+      - '5432:5432'
+    networks:
+      - prisma-network
+    healthcheck: #проверка состояния PostgreSQL с использованием pg_isready.
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    volumes: #монтируем локальный каталог ./pgdata внутрь контейнера для сохранения данных PostgreSQL.
+      - ./postgres_data:/var/lib/postgresql/data
+    deploy: #определяет ресурсы и стратегию развертывания для Docker Swarm (необязательно для стандартного использования Docker Compose).
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    command:
+      > #дополнительные параметры командной строки PostgreSQL для настройки параметров производительности.
+      postgres -c max_connections=1000
+               -c shared_buffers=256MB
+               -c effective_cache_size=768MB
+               -c maintenance_work_mem=64MB
+               -c checkpoint_completion_target=0.7
+               -c wal_buffers=16MB
+               -c default_statistics_target=100
+               -c listen_addresses='*'
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+networks:
+  prisma-network:
+
+volumes: # определяет том для хранения данных PostgreSQL, который монтируется в контейнере. Это обеспечивает сохранность данных при перезапуске контейнера или его удалении.
+  postgres_data:
