@@ -103,4 +103,19 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 ```bash
  $ docker-compose up -d
+ $ docker compose down
+```
+
+## CRUD generator
+
+```bash
+$ nest g resource [name]
+```
+
+## Prisma
+
+- Если в схему будут внесены какие-либо изменения, требуется повторно запустить команду, generate чтобы синхронизировать эти типы.
+
+```bash
+$ npx prisma generate
 ```

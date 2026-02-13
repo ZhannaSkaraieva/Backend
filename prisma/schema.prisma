@@ -8,8 +8,19 @@ generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
   moduleFormat    = "cjs"
+  //Примечание Настройка moduleFormatнеобходима, поскольку Prisma v7 по умолчанию 
+  //поставляется как модуль ES, который не работает с настройкой CommonJS от NestJS. 
+  //Если установить moduleFormatзначение cjs, Prisma будет генерировать модуль CommonJS вместо ESM.
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  email      String    @unique
+  password   String    @unique
 }
