@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/user/user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 
@@ -9,8 +8,24 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private prisma: PrismaService,
   ) {}
+
+  //"Sign Up" endpoint
+  async signUp(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (user) {
+      throw new BadRequestException('USER_ALREADY_EXISTS');
+    }
+    await this.usersService.create({ email, password });
+    return {
+      // 💡 Here the JWT secret key that's used for signing the payload
+      // is the key that was passsed in the JwtModule
+      access_token: await this.jwtService.signAsync({ user: email }),
+    };
+  }
 
   //"Sign in" endpoint
   async signIn(
