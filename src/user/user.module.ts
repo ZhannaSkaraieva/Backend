@@ -9,5 +9,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
   imports: [PrismaModule],
   controllers: [UsersController],
   providers: [UsersService, UserDataService, PrismaService],
+  exports: [UsersService], //добавить UsersService в массив exports декоратора @Module, чтобы он был виден за пределами этого модуля (AuthService).
 })
 export class UsersModule {}

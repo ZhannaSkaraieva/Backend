@@ -8,6 +8,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUser) {
     const existUser = await this.userDataService.findByEmail(
+      //exist - существующий
       createUserDto.email,
     );
     if (existUser) {
@@ -35,6 +36,18 @@ export class UsersService {
   async findOne(id: number) {
     try {
       const user = await this.userDataService.findById(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch {
+      throw new Error('Error fetching user');
+    }
+  }
+
+  async findOneByEmail(email: string) {
+    try {
+      const user = await this.userDataService.findByEmail(email);
       if (!user) {
         throw new Error('User not found');
       }

@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UsersService } from 'src/user/user.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private prisma: PrismaService,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  //"Sign in" endpoint
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new BadRequestException('USER_EMAIL_NOT_FOUND');
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const match = await bcrypt.compare(password, user.password); //(обычный пароль, хеш из БД)
+    //bcrypt— это популярная и широко используемая криптографическая хеш-функция для безопасного хранения паролей.
+    //user.password; //это хеш пароля, который хранится в базе данных. Когда пользователь пытается войти в систему, мы сравниваем введенный пароль с хешем пароля, используя bcrypt.compare. Если пароли совпадают, пользователь аутентифицирован успешно. Если нет, мы выбрасываем исключение BadRequestException с сообщением 'INVALID_PASSWORD'.
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!match) {
+      throw new BadRequestException('INVALID_PASSWORD');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload = { id: user.id };
+    return {
+      // 💡 Here the JWT secret key that's used for signing the payload
+      // is the key that was passsed in the JwtModule
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
