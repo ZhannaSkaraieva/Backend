@@ -14,16 +14,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   providers: [
     AuthService,
+    PrismaService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    PrismaService,
   ],
   controllers: [AuthController],
   exports: [AuthService],

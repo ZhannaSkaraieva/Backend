@@ -118,4 +118,7 @@ $ nest g resource [name]
 
 ```bash
 $ npx prisma generate
+$ npx prisma migrate dev --name [name]
+$ npx prisma studio
+
 ```

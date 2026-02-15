@@ -12,17 +12,20 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { AuthDto } from './dto/аuthDto.dto';
+import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: AuthDto) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('register')
   signUp(@Body() signUpDto: AuthDto) {
@@ -37,3 +40,5 @@ export class AuthController {
 }
 
 // Этот метод будет вызываться клиентом для аутентификации пользователя. Он получит имя пользователя и пароль в теле запроса и вернет JWT-токен, если пользователь аутентифицирован.
+
+//{"email": "john@gmail.com", "password": "123456"}

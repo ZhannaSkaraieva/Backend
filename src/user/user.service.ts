@@ -7,18 +7,7 @@ export class UsersService {
   constructor(private readonly userDataService: UserDataService) {}
 
   async create(createUserDto: CreateUser) {
-    const existUser = await this.userDataService.findByEmail(
-      //exist - существующий
-      createUserDto.email,
-    );
-    if (existUser) {
-      throw new Error('User with this email already exists');
-    }
-    try {
-      return await this.userDataService.create(createUserDto);
-    } catch {
-      throw new Error('Error creating user');
-    }
+    return await this.userDataService.create(createUserDto);
   }
 
   async findAll() {
@@ -46,15 +35,7 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    try {
-      const user = await this.userDataService.findByEmail(email);
-      if (!user) {
-        throw new Error('User not found');
-      }
-      return user;
-    } catch {
-      throw new Error('Error fetching user');
-    }
+    return await this.userDataService.findByEmail(email);
   }
 
   async update(id: number, updateUserDto: UpdateUser) {

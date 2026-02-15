@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -36,12 +36,9 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('USER_EMAIL_NOT_FOUND');
     }
+    const isMatch = await bcrypt.compare(password, user.password);
 
-    const match = await bcrypt.compare(password, user.password); //(обычный пароль, хеш из БД)
-    //bcrypt— это популярная и широко используемая криптографическая хеш-функция для безопасного хранения паролей.
-    //user.password; //это хеш пароля, который хранится в базе данных. Когда пользователь пытается войти в систему, мы сравниваем введенный пароль с хешем пароля, используя bcrypt.compare. Если пароли совпадают, пользователь аутентифицирован успешно. Если нет, мы выбрасываем исключение BadRequestException с сообщением 'INVALID_PASSWORD'.
-
-    if (!match) {
+    if (!isMatch) {
       throw new BadRequestException('INVALID_PASSWORD');
     }
 

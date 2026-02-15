@@ -2,13 +2,13 @@ version: '3.7'
 
 services:
   postgres:
-    image: postgres:latest #используемая Docker-образ PostgreSQL
+    image: postgres:15 #используемая Docker-образ PostgreSQL
     container_name: postgres_container #имя контейнера, в котором будет запущен PostgreSQL.
-    restart: unless-stopped #restart, tty, stdin_open: настройки перезапуска контейнера и взаимодействия с ним через терминал.
+    restart: always #restart, tty, stdin_open: настройки перезапуска контейнера и взаимодействия с ним через терминал.
     environment: #переменные окружения для настройки PostgreSQL (пользователь, пароль, имя базы данных).
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports: #проброс портов, где "5430:5432" означает, что порт PostgreSQL внутри контейнера (5432) проброшен на порт хоста (5430). Это значит что для подключения к постгрес нужно будет прописывать порт 5430.
       - '5432:5432'
     networks:
