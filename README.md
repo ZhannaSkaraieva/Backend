@@ -122,3 +122,12 @@ $ npx prisma migrate dev --name [name]
 $ npx prisma studio
 
 ```
+
+## SendGreed
+
+```bash
+$ npm install --save @sendgrid/mail
+$ nest generate module email
+$ nest generate class email/sendgrid-client --flat --no-spec
+$ nest generate service email/email --flat --no-spec
+```
