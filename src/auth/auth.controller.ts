@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -36,6 +37,12 @@ export class AuthController {
   @Get('profile')
   getProfile(@Req() req: Request & { user: { id: number } }) {
     return req.user;
+  }
+
+  @Public()
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
   }
 }
 

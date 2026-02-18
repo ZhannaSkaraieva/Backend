@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { EmailService } from './email/email.service';
+//import { EventService } from './event/event.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly emailService: EmailService,
+    //private readonly eventService: EventService,
   ) {}
 
   @Get()
@@ -14,13 +14,8 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post('send-test-email')
-  async sendEmail(
-    @Body() sendEmailDTO: { recipient: string; body: string },
-  ): Promise<void> {
-    await this.emailService.sendTestEmail(
-      sendEmailDTO.recipient,
-      sendEmailDTO.body,
-    );
-  }
+  // @Post('events')
+  // triggerEvent(@Body() body: { type: string; data: any }) {
+  //   return this.eventService.handleIncomingEvent(body.type, body.data);
+  // }
 }

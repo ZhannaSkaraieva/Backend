@@ -6,4 +6,5 @@ export interface CreateUser {
 export interface UpdateUser {
   email?: string;
   password?: string;
+  isVaerified?: boolean;
 }

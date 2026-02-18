@@ -61,4 +61,16 @@ export class UsersService {
       throw new Error('Error removing user');
     }
   }
+
+  async markAsVerified(id: number) {
+    try {
+      const user = await this.userDataService.findById(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return await this.userDataService.markAsVerified(id);
+    } catch {
+      throw new Error('Error marking user as verified');
+    }
+  }
 }

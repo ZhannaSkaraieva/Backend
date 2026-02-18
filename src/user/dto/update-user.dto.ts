@@ -1,5 +1,11 @@
 import { UpdateUser } from '../intertypes/user.intertype';
-import { IsNotEmpty, IsString, IsEmail, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  MinLength,
+  IsBoolean,
+} from 'class-validator';
 
 export class UpdateUserDto implements UpdateUser {
   @IsNotEmpty()
@@ -12,4 +18,7 @@ export class UpdateUserDto implements UpdateUser {
   })
   @IsString()
   password: string;
+
+  @IsBoolean()
+  isVerified?: boolean;
 }

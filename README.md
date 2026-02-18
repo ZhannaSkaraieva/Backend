@@ -127,6 +127,14 @@ $ npx prisma studio
 
 ```bash
 $ npm install --save @sendgrid/mail
+$ npm install @sendgrid/mail @nestjs/config @nestjs/event-emitter
+```
+
+- @sendgrid/mailПозволяет вашему сервису отправлять транзакционные электронные письма с помощью Twilio SendGrid.
+- @nestjs/configПозволяет безопасно управлять конфиденциальными значениями конфигурации, такими как ключи API, с помощью файла .env .
+- @nestjs/event-emitter: Помогает запускать и отслеживать пользовательские события приложения чистым и независимым способом.
+
+```bash
 $ nest generate module email
 $ nest generate class email/sendgrid-client --flat --no-spec
 $ nest generate service email/email --flat --no-spec

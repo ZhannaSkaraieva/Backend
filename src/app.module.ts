@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { EmailModule } from './email/email.module';
+//import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EmailModule } from './email/email.module';
     AuthModule,
     PrismaModule,
     EmailModule,
+    //EventEmitterModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

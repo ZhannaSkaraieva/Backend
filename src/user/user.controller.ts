@@ -1,6 +1,15 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('user')
 export class UsersController {
@@ -26,8 +35,9 @@ export class UsersController {
     return await this.usersService.update(id, updateUserDto);
   }
 
+  @Public()
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.usersService.remove(id);
   }
 }

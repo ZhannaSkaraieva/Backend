@@ -2,12 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { EmailService } from 'src/email/email.service';
+
+interface JwtPayload {
+  id: number;
+  email: string;
+}
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private emailService: EmailService,
   ) {}
 
   //"Sign Up" endpoint
@@ -19,7 +26,18 @@ export class AuthService {
     if (user) {
       throw new BadRequestException('USER_ALREADY_EXISTS');
     }
-    await this.usersService.create({ email, password });
+    const createdUser = await this.usersService.create({ email, password });
+    // генерирую verification token
+    const verificationToken = await this.jwtService.signAsync(
+      { id: createdUser.id },
+      { expiresIn: '1h' },
+    );
+    console.log('Sending email to:', createdUser.email);
+    // передаю токен в EmailService
+    await this.emailService.sendVerificationEmail(
+      createdUser.email,
+      verificationToken,
+    );
     return {
       // 💡 Here the JWT secret key that's used for signing the payload
       // is the key that was passsed in the JwtModule
@@ -48,5 +66,13 @@ export class AuthService {
       // is the key that was passsed in the JwtModule
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async verifyEmail(token: string) {
+    const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
+
+    await this.usersService.markAsVerified(payload.id);
+
+    return { message: 'Email verified successfully' };
   }
 }

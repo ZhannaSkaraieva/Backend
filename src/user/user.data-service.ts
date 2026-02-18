@@ -34,6 +34,7 @@ export class UserDataService {
       data: {
         email: createUserDto.email,
         password: hashedPassword,
+        isVerified: false,
       },
     });
   }
@@ -52,6 +53,13 @@ export class UserDataService {
   async remove(id: number): Promise<User> {
     return await this.prismaService.user.delete({
       where: { id },
+    });
+  }
+
+  async markAsVerified(id: number): Promise<User> {
+    return await this.prismaService.user.update({
+      where: { id },
+      data: { isVerified: true },
     });
   }
 }
