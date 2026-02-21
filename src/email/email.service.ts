@@ -16,10 +16,13 @@ export class EmailService {
     sgMail.setApiKey(apiKey); //SDK SendGrid инициализируется этим ключом, чтобы он мог отправлять электронные письма от имени сервиса.
   }
 
-  async sendVerificationEmail(email: string, verificationToken: string) {
-    console.log('sendVerificationEmail called');
-    console.log('Email:', email);
-    console.log('Token:', verificationToken);
+  //НАСТРОЙКА МЕТОДА ДЛЯ ОТПРАВКИ ПИСЕМ
+  async sendEmail(
+    to: string,
+    subject: string,
+    templateId: string,
+    dynamicData: Record<string, unknown>,
+  ) {
     const from = this.configService.get<string>('SENDGRID_SENDER_EMAIL');
     if (!from) {
       throw new Error(
@@ -27,37 +30,38 @@ export class EmailService {
       );
     }
     const msg = {
-      to: email,
+      to,
       from,
-      subject: 'Verify your email',
-      html: `<p>Click <a href="http://localhost:3000/auth/verify-email?token=${verificationToken}">here</a> to verify your email.</p>`,
+      subject,
+      templateId,
+      dynamicTemplateData: dynamicData,
     };
     try {
       await sgMail.send(msg);
     } catch {
-      throw new Error('Failed to send verification email');
+      throw new Error('Failed to send email');
     }
   }
-
-  // @OnEvent('user.registered')
-  // async handleUserRegistered(payload: any) {
-  //   await this.sendEmail(
-  //     payload.email,
-  //     'Welcome to Our App!',
-  //     'd-xxxxxxxxxxxx',
-  //     { name: payload.name },
-  //   );
-  // }
-  // sendEmail(email: any, arg1: string, arg2: string, arg3: { name: any }) {
-  //   throw new Error('Method not implemented.');
-  // }
-  // @OnEvent('invoice.generated')
-  // async handleInvoiceGeneratedEvent(payload: any) {
-  //   await this.sendEmail(
-  //     payload.email,
-  //     'Your Invoice is Ready',
-  //     'd-xxxxxxxxxxxx',
-  //     { amount: payload.amount },
-  //   );
-  // }
 }
+// async sendVerificationEmail(email: string, verificationToken: string) {
+//   console.log('sendVerificationEmail called');
+//   console.log('Email:', email);
+//   console.log('Token:', verificationToken);
+//   const from = this.configService.get<string>('SENDGRID_SENDER_EMAIL');
+//   if (!from) {
+//     throw new Error(
+//       'SENDGRID_SENDER_EMAIL is not defined in the configuration',
+//     );
+//   }
+//   const msg = {
+//     to: email,
+//     from,
+//     subject: 'Verify your email',
+//     html: `<p>Click <a href="http://localhost:3000/auth/verify-email?token=${verificationToken}">here</a> to verify your email.</p>`,
+//   };
+//   try {
+//     await sgMail.send(msg);
+//   } catch {
+//     throw new Error('Failed to send verification email');
+//   }
+// }

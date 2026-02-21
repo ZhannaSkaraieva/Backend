@@ -6,12 +6,11 @@ import {
   HttpStatus,
   Post,
   Query,
-  Req,
-  UseGuards,
+  //Req,
+  //UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
+//import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
 import { AuthDto } from './dto/аuthDto.dto';
 import { Public } from './public.decorator';
 
@@ -22,27 +21,42 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: AuthDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: AuthDto) {
+    return await this.authService.signIn(signInDto.email, signInDto.password);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  signUp(@Body() signUpDto: AuthDto) {
-    return this.authService.signUp(signUpDto.email, signUpDto.password);
+  async signUp(@Body() signUpDto: AuthDto) {
+    return await this.authService.signUp(signUpDto.email, signUpDto.password);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Req() req: Request & { user: { id: number } }) {
-    return req.user;
-  }
+  // @UseGuards(AuthGuard)
+  // @Get('profile')
+  // async getProfile(@Req() req: Request & { user: { id: number } }) {
+  //   return await this.authService.getProfile(req.user.id);
+  // }
 
   @Public()
   @Get('verify-email')
   async verifyEmail(@Query('token') token: string) {
-    return this.authService.verifyEmail(token);
+    return await this.authService.verifyEmail(token);
+  }
+
+  @Public()
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body('email') email: string) {
+    return await this.authService.requestPasswordReset(email);
+  }
+
+  @Public()
+  @Post('reset-password')
+  async resetPassword(
+    @Query('token') token: string,
+    @Body('password') password: string,
+  ) {
+    return await this.authService.resetPassword(token, password);
   }
 }
 
