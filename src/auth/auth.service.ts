@@ -27,10 +27,10 @@ export class AuthService {
     }
     const createdUser = await this.usersService.create({ email, password });
     // генерирую verification token
-    const verificationToken = await this.jwtService.signAsync(
-      { id: createdUser.id },
-      { expiresIn: '1d' },
-    );
+    const payload = { id: createdUser.id, email: createdUser.email };
+    const verificationToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '1d',
+    });
     const verificationLink = `${process.env.APP_URL}/auth/verify-email?token=${verificationToken}`;
     console.log('Sending email to:', createdUser.email);
     // передаю токен в EmailService
