@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import type { CreateUser, UpdateUser } from './intertypes/user.intertype';
+import type { CreateUser, UpdateUser } from './interface/user.interface';
 import { UserDataService } from './user.data-service';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly userDataService: UserDataService) {}
 
-  async create(createUserDto: CreateUser) {
-    return await this.userDataService.create(createUserDto);
+  async create(createUser: CreateUser) {
+    return await this.userDataService.create(createUser);
   }
 
   async findAll() {
@@ -22,9 +22,9 @@ export class UsersService {
     }
   }
 
-  async findOne(id: number) {
+  async findOne(query: { id?: number; email?: string }) {
     try {
-      const user = await this.userDataService.findById(id);
+      const user = await this.userDataService.findOne(query);
       if (!user) {
         throw new Error('User not found');
       }
@@ -34,17 +34,13 @@ export class UsersService {
     }
   }
 
-  async findOneByEmail(email: string) {
-    return await this.userDataService.findByEmail(email);
-  }
-
-  async update(id: number, updateUserDto: UpdateUser) {
+  async update(id: number, updateUser: UpdateUser) {
     try {
-      const user = await this.userDataService.findById(id);
+      const user = await this.userDataService.findOne({ id });
       if (!user) {
         throw new Error('User not found');
       }
-      return await this.userDataService.update(id, updateUserDto);
+      return await this.userDataService.update(id, updateUser);
     } catch {
       throw new Error('Error updating user');
     }
@@ -52,7 +48,7 @@ export class UsersService {
 
   async remove(id: number) {
     try {
-      const user = await this.userDataService.findById(id);
+      const user = await this.userDataService.findOne({ id });
       if (!user) {
         throw new Error('User not found');
       }
@@ -64,7 +60,7 @@ export class UsersService {
 
   async markAsVerified(id: number) {
     try {
-      const user = await this.userDataService.findById(id);
+      const user = await this.userDataService.findOne({ id });
       if (!user) {
         throw new Error('User not found');
       }

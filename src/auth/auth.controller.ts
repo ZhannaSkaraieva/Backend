@@ -6,10 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
-  //Req,
-  //UseGuards,
 } from '@nestjs/common';
-//import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/аuthDto.dto';
 import { Public } from './public.decorator';
@@ -31,12 +28,6 @@ export class AuthController {
   async signUp(@Body() signUpDto: AuthDto) {
     return await this.authService.signUp(signUpDto.email, signUpDto.password);
   }
-
-  // @UseGuards(AuthGuard)
-  // @Get('profile')
-  // async getProfile(@Req() req: Request & { user: { id: number } }) {
-  //   return await this.authService.getProfile(req.user.id);
-  // }
 
   @Public()
   @Get('verify-email')

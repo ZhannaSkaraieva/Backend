@@ -1,4 +1,4 @@
-import type { CreateUser } from '../intertypes/user.intertype';
+import type { CreateUser } from '../interface/user.interface';
 import { IsNotEmpty, IsString, IsEmail, MinLength } from 'class-validator';
 
 export class CreateUserDto implements CreateUser {

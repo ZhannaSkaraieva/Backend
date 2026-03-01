@@ -10,24 +10,22 @@ import {
 import { UsersService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from 'src/auth/public.decorator';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // @Post()
-  // async create(@Body() createUserDto: CreateUserDto) {
-  //   return await this.usersService.create(createUserDto);
-  // }
-
   @Get()
-  async findAll() {
-    return await this.usersService.findAll();
+  async findAll(): Promise<ResponseUserDto[]> {
+    const users = await this.usersService.findAll();
+    return users.map((user) => new ResponseUserDto(user));
   }
 
+  @Public()
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    return await this.usersService.findOne(id);
+  async findOne(@Param('id') id: number): Promise<ResponseUserDto> {
+    return await this.usersService.findOne({ id });
   }
 
   @Patch(':id')

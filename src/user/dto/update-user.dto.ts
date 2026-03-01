@@ -1,4 +1,4 @@
-import { UpdateUser } from '../intertypes/user.intertype';
+import { UpdateUser } from '../interface/user.interface';
 import {
   IsNotEmpty,
   IsString,

@@ -3,6 +3,7 @@ import { UsersService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from 'src/email/email.service';
+import { ConfigService } from '@nestjs/config';
 
 interface JwtPayload {
   id: number;
@@ -15,14 +16,12 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private emailService: EmailService,
+    private configService: ConfigService,
   ) {}
 
   //"Sign Up" endpoint
-  async signUp(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByEmail(email);
+  async signUp(email: string, password: string) {
+    const user = await this.usersService.findOne({ email });
     if (user) {
       throw new BadRequestException('USER_ALREADY_EXISTS');
     }
@@ -30,15 +29,18 @@ export class AuthService {
     // генерирую verification token
     const verificationToken = await this.jwtService.signAsync(
       { id: createdUser.id },
-      { expiresIn: '1h' },
+      { expiresIn: '1d' },
     );
     const verificationLink = `${process.env.APP_URL}/auth/verify-email?token=${verificationToken}`;
     console.log('Sending email to:', createdUser.email);
     // передаю токен в EmailService
-    await this.emailService.sendEmail(
+    const provider =
+      this.configService.get<string>('MAIL_PROVIDER') || 'sendgrid';
+    await this.emailService.send(
+      provider, //можно передать провайдера напрямую в метод, если нужно
       createdUser.email,
       'Verify your email',
-      'd-c140abc61f854bef8542ecbe5ad6a3f4',
+      'verify email',
       { verificationLink },
     );
     return {
@@ -53,7 +55,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOne({ email });
     if (!user) {
       throw new BadRequestException('USER_EMAIL_NOT_FOUND');
     }
@@ -85,7 +87,7 @@ export class AuthService {
 
   async requestPasswordReset(email: string) {
     try {
-      const user = await this.usersService.findOneByEmail(email);
+      const user = await this.usersService.findOne({ email });
       if (!user) {
         throw new BadRequestException('USER_EMAIL_NOT_FOUND');
       }
@@ -96,10 +98,13 @@ export class AuthService {
       const resetLink = `${process.env.APP_URL}/auth/reset-password?token=${resetToken}`;
       console.log('Sending email to:', user.email);
       // передаю токен в EmailService
-      await this.emailService.sendEmail(
+      const provider =
+        this.configService.get<string>('MAIL_PROVIDER') || 'sendgrid';
+      await this.emailService.send(
+        provider, //можно передать провайдера напрямую в метод, если нужно
         user.email,
         'Reset your password',
-        'd-8fe8c5b38cce4d0e9cd3338565e4edf7',
+        'reset password',
         { resetLink },
       );
       return { message: 'Password reset email sent' };
