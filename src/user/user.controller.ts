@@ -24,7 +24,9 @@ export class UsersController {
 
   @Public()
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<ResponseUserDto> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseUserDto | null> {
     return await this.usersService.findOne({ id });
   }
 
@@ -35,7 +37,9 @@ export class UsersController {
 
   @Public()
   @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ResponseUserDto> {
     return await this.usersService.remove(id);
   }
 }

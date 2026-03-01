@@ -9,8 +9,8 @@ import { EmailProviderInterface } from '../interfaces/email.interface';
 @Injectable()
 export class SendGridService implements EmailProviderInterface {
   private readonly templates: Record<string, string> = {
-    'verify-email': 'd-8fe8c5b38cce4d0e9cd3338565e4edf7',
-    'reset-password': 'd-c140abc61f854bef8542ecbe5ad6a3f4',
+    'verify-email': 'd-c140abc61f854bef8542ecbe5ad6a3f4',
+    'reset-password': 'd-8fe8c5b38cce4d0e9cd3338565e4edf7',
   };
   constructor(private configService: ConfigService) {
     const apiKey = this.configService.get<string>('SENDGRID_API_KEY');

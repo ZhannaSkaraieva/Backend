@@ -23,15 +23,7 @@ export class UsersService {
   }
 
   async findOne(query: { id?: number; email?: string }) {
-    try {
-      const user = await this.userDataService.findOne(query);
-      if (!user) {
-        throw new Error('User not found');
-      }
-      return user;
-    } catch {
-      throw new Error('Error fetching user');
-    }
+    return await this.userDataService.findOne(query);
   }
 
   async update(id: number, updateUser: UpdateUser) {

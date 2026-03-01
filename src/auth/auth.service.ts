@@ -40,7 +40,7 @@ export class AuthService {
       provider, //можно передать провайдера напрямую в метод, если нужно
       createdUser.email,
       'Verify your email',
-      'verify email',
+      'verify-email',
       { verificationLink },
     );
     return {
@@ -65,7 +65,7 @@ export class AuthService {
       throw new BadRequestException('INVALID_PASSWORD');
     }
 
-    const payload = { id: user.id };
+    const payload = { id: user.id, email: user.email };
     return {
       // 💡 Here the JWT secret key that's used for signing the payload
       // is the key that was passsed in the JwtModule

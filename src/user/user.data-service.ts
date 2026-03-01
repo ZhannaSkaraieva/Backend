@@ -9,11 +9,12 @@ export class UserDataService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findOne(query: { id?: number; email?: string }): Promise<User | null> {
+    //опверяю наличие хотя бы одного параметра для поиска, иначе возвращаю null
+    if (!query.id && !query.email) {
+      return null;
+    }
     return await this.prismaService.user.findUnique({
-      where: {
-        id: query.id,
-        email: query.email,
-      },
+      where: query.id ? { id: query.id } : { email: query.email },
     });
   }
 
